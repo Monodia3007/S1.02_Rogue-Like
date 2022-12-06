@@ -3,19 +3,38 @@ import extensions.CSVFile;
 class Main extends Program{
 
     String[][] questionReponse;
+    String[][] questionReponseBoss; 
 
     void fetchQR(String filename){
+        //Nous chargeon le fichier possédant les question, les réponses et les indice.
         CSVFile file = loadCSV(filename);
+        //initialisation du tableau avec la taille du fichier.
         questionReponse = new String[rowCount(file)][columnCount(file)];
+        //Remplissage du tableau
         for (int i=0;i<rowCount(file);i++){
             for (int j=0;j<columnCount(file);j++){
                 questionReponse[i][j]=getCell(file,i,j);
             }
         }
     }
+
+    void fetchQRB(String filename){
+        //Nous chargeon le fichier possédant les question, les réponses et les indice du boss.
+        CSVFile file = loadCSV(filename);
+        //initialisation du tableau avec la taille du fichier.
+        questionReponseBoss = new String[rowCount(file)][columnCount(file)];
+        //Remplissage du tableau
+        for (int i=0;i<rowCount(file);i++){
+            for (int j=0;j<columnCount(file);j++){
+                questionReponseBoss[i][j]=getCell(file,i,j);
+            }
+        }
+    }
     
     boolean gameOver(int life){
+        //si le joueur na plus de vie
         if (life<1){
+            // partie fini
             return true;
         }
         else{
@@ -24,32 +43,42 @@ class Main extends Program{
     }
 
     Player newPlayer(String nickname){
+        //Création d'un nouvelle éléement de la classe joueur
         Player p = new Player();
+        //Iniialisation du pseudo
 		p.nickname=nickname;
+        //Iniialisation du noumbre de vie
 		p.life=3;
-        p.hint= new int[10];
+        //Iniialisation du nombre d'indice
+        p.hint=0;
 		return p;
     }
 
     void deplacement(Player p){
         boolean stop = false;
         char rep= ' ';
+        // Tant que le déplacement n'est pas éffectuer
         while (!stop){
             println("Ou voulez vous aller ? ");
             println("Appuyer sur Z pour aller en haut, Q pour aller a gauche, S pour aller en bas, et D pour aller a droite");
             rep = readChar();
+            //Déplacement vers le haut
             if (rep== 'Z' || rep == 'z'){
                 stop = true;
             }
+            //Déplacement vers la gauche
             else if (rep == 'Q' || rep == 'q'){
                 stop = true;
             }
+            //Déplacement vers le bas
             else if (rep == 'S' || rep == 's'){
                 stop = true;
             }
+            //Déplacement vers la droite
             else if (rep == 'D' || rep == 'd'){
                 stop = true;
             }
+            // On recommence la saisie de touche car la touche ne correspond pas au déplacement
             else{
                 println("Veuillez taper une touche valide. ");
             }
@@ -58,23 +87,89 @@ class Main extends Program{
     }
 
 
-    void question(String Q, String R, Player p){
+    void question(String[][] QR, int ligne, Player p){
         boolean stop = false;
         String rep = "";
+        //Tant que la question n'a pas été répondu ou que le joueur a des vie
         while (!stop && p.life>0){
-            println(Q);
+            //Affichage de la question
+            println("Question : " + QR[ligne][0]);
+            //récupération de la réponsse
             rep = readString();
-            if (equals(rep,R)){
+            //Si la réponse du joueur est bonne
+            if (equals(rep,QR[ligne][1])){
                 println("Bien jouer");
+                //On arrète la boucle
                 stop = true;
             }
             else{
+                //Sinon on lui enlève une vie et il recommence
                 println("Rater");
                 p.life--;
             }
         }
     }
 
-    
+
+    void questionBoss(String[][] QR, int ligne, Player p){
+        boolean stop = false;
+        String rep = "";
+        char repHint = ' ';
+        boolean hintOn = false;
+        //Tant que la question n'a pas été répondu ou que le joueur à des vie
+        while (!stop && p.life>0){
+            //Affichage de la question
+            println("Question : " + QR[ligne][0]);
+            //Si le joueur n'a pas encore utiliser d'indice 
+            if(hintOn=false){
+                //On lui demande si il veut en utiliser
+                println("Voulez vous un indice ? o/n");
+                repHint = readChar();
+                //Si oui alors on lui conssomme un indice
+                if (repHint==o){
+                    hintOn=true;
+                    p.hint--
+                }
+            }
+            clearScreen();
+            //On re-affhiche la question
+            println("Question : " + QR[ligne][0]);
+
+            //Si le joueura un l'indice d'actif
+            if(hintOn){
+                //On affiche l'indice
+                println("Indice : " + QR[ligne][2]);
+            }
+
+            //On récupère la réponssse
+            rep = readString();
+
+            //Si la réponse du joueur est bonne
+            if (equals(rep,QR[ligne][1])){
+                //On dit au combat de s'arrèté
+                println("Bien jouer");
+                stop = true;
+                boolean hintOn = false;
+            }
+            else{
+                //Sinon on lui enlève une vie et il recommence
+                println("Rater");
+                p.life--;
+            }
+        }
+    }
+
+    void getHint(Player p){
+        //On rajoute un indice au joueur
+        p.hint++;
+    }
+
+    int random(int min, int max){
+        //On récupère un nombre randome entre 0 et max exclu
+        int range = max - min;
+        return (int)(random()*range)+min;
+    }
+
+
 
 }
