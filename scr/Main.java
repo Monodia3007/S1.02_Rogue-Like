@@ -206,4 +206,18 @@ class Main extends Program{
         
     }
 
+    void algorithm(){
+        int tmp =0;
+        Player p;
+        String pseudo = "";
+        println("Nouvelle partie : 1                     Reprendre une partie : 2");
+        tmp = readInt();
+        if (tmp==1){
+            println("Entrez votre pseudo : ");
+            pseudo = readString();
+            p = newPlayer(pseudo);
+        }
+
+    }
+
 }
