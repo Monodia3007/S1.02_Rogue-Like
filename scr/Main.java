@@ -42,6 +42,12 @@ class Main extends Program{
         }
     }
 
+    void initPosition(Player p){
+        p.x=10;
+        p.y=10;
+    }
+
+
     Player newPlayer(String nickname){
         //Création d'un nouvelle éléement de la classe joueur
         Player p = new Player();
@@ -51,6 +57,8 @@ class Main extends Program{
 		p.life=3;
         //Iniialisation du nombre d'indice
         p.hint=0;
+        //Iniialisation de la position du joueur
+        initPosition(p);
 		return p;
     }
 
@@ -63,19 +71,19 @@ class Main extends Program{
             println("Appuyer sur Z pour aller en haut, Q pour aller a gauche, S pour aller en bas, et D pour aller a droite");
             rep = readChar();
             //Déplacement vers le haut
-            if (rep== 'Z' || rep == 'z'){
+            if ((rep== 'Z' || rep == 'z') && (p.y<21)){
                 stop = true;
             }
             //Déplacement vers la gauche
-            else if (rep == 'Q' || rep == 'q'){
+            else if ((rep == 'Q' || rep == 'q') && (p.x>0)){
                 stop = true;
             }
             //Déplacement vers le bas
-            else if (rep == 'S' || rep == 's'){
+            else if ((rep == 'S' || rep == 's') && (p.y>0)){
                 stop = true;
             }
             //Déplacement vers la droite
-            else if (rep == 'D' || rep == 'd'){
+            else if ((rep == 'D' || rep == 'd') && (p.x<21)){
                 stop = true;
             }
             // On recommence la saisie de touche car la touche ne correspond pas au déplacement
