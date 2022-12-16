@@ -1,5 +1,12 @@
 class Main extends Program {
-    void initialiserDonjon () {
+
+    final int COTE = 21;
+
+    int random(int min, int max) {
+        int range = max - min;
+        return (int) (random() * range) + min;
+    }
+    void initialiserDonjon (char[][] donjon) {
 
     }
 
@@ -8,14 +15,6 @@ class Main extends Program {
     }
 
     void algorithm () {
-        int largeur = 0, longueur = 0;
-        println("Quelle taille de donjon voulez vous ?");
-        while (largeur <= 1 && longueur <= 1) {
-            print("Longueur : ");
-            longueur = readInt();
-            print("Largeur : ");
-            largeur = readInt();
-        }
-        int[][] donjon = new int[longueur][largeur];
+        char[][] donjon = new char[COTE][COTE];
     }
 }
