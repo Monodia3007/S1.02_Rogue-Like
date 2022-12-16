@@ -108,6 +108,18 @@ class Main extends Program{
                 p.life--;
             }
         }
+        // Donne une chance d'obtenire un bonus
+        if (stop){
+            int r = random(1,11);
+            //30% de chance de d'obtenir un point de vie en plus
+            if(r>7){
+                getLife(p);
+            }
+            //10% de chance d'obtenir un indice contre un boss
+            else if(r<2){
+                getHint(p);
+            }
+        }
     }
 
 
@@ -126,9 +138,9 @@ class Main extends Program{
                 println("Voulez vous un indice ? o/n");
                 repHint = readChar();
                 //Si oui alors on lui conssomme un indice
-                if (repHint==o){
+                if (repHint=='o'){
                     hintOn=true;
-                    p.hint--
+                    p.hint--;
                 }
             }
             clearScreen();
@@ -149,7 +161,7 @@ class Main extends Program{
                 //On dit au combat de s'arrèté
                 println("Bien jouer");
                 stop = true;
-                boolean hintOn = false;
+                hintOn = false;
             }
             else{
                 //Sinon on lui enlève une vie et il recommence
@@ -164,12 +176,26 @@ class Main extends Program{
         p.hint++;
     }
 
+    void getLife(Player p){
+        //On rajoute un indice au joueur
+        p.life++;
+    }
+
     int random(int min, int max){
         //On récupère un nombre randome entre 0 et max exclu
         int range = max - min;
         return (int)(random()*range)+min;
     }
 
-
+    void Fin(Player p){
+        clearScreen();
+        if(gameOver(p.life)){
+            println("VOUS AVEZ PERDUE");
+        }
+        else{
+            println("VOUS AVEZ GAGNER!!!");
+        }
+        
+    }
 
 }
