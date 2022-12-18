@@ -3,7 +3,40 @@ import extensions.CSVFile;
 class Main extends Program{
 
     String[][] questionReponse;
-    String[][] questionReponseBoss; 
+    String[][] questionReponseBoss;
+    final int COTE = 21;
+    final Piece[] PIECES = new Piece[]{
+            newPiece('V', 0.0),
+            newPiece('S', 0.0),
+            newPiece('R', 0.6),
+            newPiece('H', 0.0),
+            newPiece('B', 0.0)
+    }
+    final int NB_PIECE_PAR_ETAGE = 10;
+    Donjon donjonAlpha = newDonjon();
+    donjon.etageActuel = new Piece[][] {
+            {PIECES[4], PIECES[0]},
+            {PIECES[2], PIECES[3]},
+            {PIECES[2], PIECES[0]},
+            {PIECES[2], PIECES[2]},
+            {PIECES[0], PIECES[2]},
+            {PIECES[0], PIECES[1]}
+    };
+    donjon.numeroEtage = 0;
+
+    Donjon newDonjon() {
+        Donjon donjon = new Donjon();
+        donjon.etageActuel = new Piece[COTE][COTE];
+        donjon.numeroEtage = 0;
+        return donjon;
+    }
+
+    Piece newPiece (char type, double spawnRate) {
+        Piece piece = new Piece();
+        piece.type = type;
+        piece.spawnRate = spawnRate;
+        return piece;
+    }
 
     void fetchQR(String filename){
         //Nous chargeon le fichier possédant les question, les réponses et les indice.
