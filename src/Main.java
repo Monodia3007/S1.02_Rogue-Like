@@ -42,6 +42,12 @@ class Main extends Program{
         }
     }
 
+    void initPosition(Player p){
+        p.x=10;
+        p.y=10;
+    }
+
+
     Player newPlayer(String nickname){
         //Création d'un nouvelle éléement de la classe joueur
         Player p = new Player();
@@ -51,6 +57,8 @@ class Main extends Program{
 		p.life=3;
         //Iniialisation du nombre d'indice
         p.hint=0;
+        //Iniialisation de la position du joueur
+        initPosition(p);
 		return p;
     }
 
@@ -63,19 +71,19 @@ class Main extends Program{
             println("Appuyer sur Z pour aller en haut, Q pour aller a gauche, S pour aller en bas, et D pour aller a droite");
             rep = readChar();
             //Déplacement vers le haut
-            if (rep== 'Z' || rep == 'z'){
+            if ((rep== 'Z' || rep == 'z') && (p.y<21)){
                 stop = true;
             }
             //Déplacement vers la gauche
-            else if (rep == 'Q' || rep == 'q'){
+            else if ((rep == 'Q' || rep == 'q') && (p.x>0)){
                 stop = true;
             }
             //Déplacement vers le bas
-            else if (rep == 'S' || rep == 's'){
+            else if ((rep == 'S' || rep == 's') && (p.y>0)){
                 stop = true;
             }
             //Déplacement vers la droite
-            else if (rep == 'D' || rep == 'd'){
+            else if ((rep == 'D' || rep == 'd') && (p.x<21)){
                 stop = true;
             }
             // On recommence la saisie de touche car la touche ne correspond pas au déplacement
@@ -108,6 +116,18 @@ class Main extends Program{
                 p.life--;
             }
         }
+        // Donne une chance d'obtenire un bonus
+        if (stop){
+            int r = random(1,11);
+            //30% de chance de d'obtenir un point de vie en plus
+            if(r>7){
+                getLife(p);
+            }
+            //10% de chance d'obtenir un indice contre un boss
+            else if(r<2){
+                getHint(p);
+            }
+        }
     }
 
 
@@ -126,9 +146,9 @@ class Main extends Program{
                 println("Voulez vous un indice ? o/n");
                 repHint = readChar();
                 //Si oui alors on lui conssomme un indice
-                if (repHint==o){
+                if (repHint=='o'){
                     hintOn=true;
-                    p.hint--
+                    p.hint--;
                 }
             }
             clearScreen();
@@ -149,7 +169,7 @@ class Main extends Program{
                 //On dit au combat de s'arrèté
                 println("Bien jouer");
                 stop = true;
-                boolean hintOn = false;
+                hintOn = false;
             }
             else{
                 //Sinon on lui enlève une vie et il recommence
@@ -164,12 +184,40 @@ class Main extends Program{
         p.hint++;
     }
 
+    void getLife(Player p){
+        //On rajoute un indice au joueur
+        p.life++;
+    }
+
     int random(int min, int max){
         //On récupère un nombre randome entre 0 et max exclu
         int range = max - min;
         return (int)(random()*range)+min;
     }
 
+    void Fin(Player p){
+        clearScreen();
+        if(gameOver(p.life)){
+            println("VOUS AVEZ PERDUE");
+        }
+        else{
+            println("VOUS AVEZ GAGNER!!!");
+        }
+        
+    }
 
+    void algorithm(){
+        int tmp =0;
+        Player p;
+        String pseudo = "";
+        println("Nouvelle partie : 1                     Reprendre une partie : 2");
+        tmp = readInt();
+        if (tmp==1){
+            println("Entrez votre pseudo : ");
+            pseudo = readString();
+            p = newPlayer(pseudo);
+        }
+
+    }
 
 }
