@@ -92,7 +92,15 @@ class Main extends Program{
 		return p;
     }
 
-    void deplacement(Player p){
+    boolean pieceValide(Donjon donjon, int x, int y){
+        if(donjon.etageActuel[y][x].type == 'V'){
+            return false;
+        }
+        return true;
+    }
+    
+
+    void deplacement(Player p, Donjon donjon){
         boolean stop = false;
         char rep= ' ';
         // Tant que le déplacement n'est pas éffectuer
@@ -101,20 +109,24 @@ class Main extends Program{
             println("Appuyer sur Z pour aller en haut, Q pour aller a gauche, S pour aller en bas, et D pour aller a droite");
             rep = readChar();
             //Déplacement vers le haut
-            if ((rep== 'Z' || rep == 'z') && (p.y<21)){
+            if ((rep== 'Z' || rep == 'z') && (p.y<length(donjon,1)) && (pieceValide(donjon, p.y+1, p.x))){
                 stop = true;
+                p.y++;
             }
             //Déplacement vers la gauche
-            else if ((rep == 'Q' || rep == 'q') && (p.x>0)){
+            else if ((rep == 'Q' || rep == 'q') && (p.x>0) && (pieceValide(donjon, p.y, p.x-1))){
                 stop = true;
+                p.x--;
             }
             //Déplacement vers le bas
-            else if ((rep == 'S' || rep == 's') && (p.y>0)){
+            else if ((rep == 'S' || rep == 's') && (p.y>0) && (pieceValide(donjon, p.y-1, p.x))){
                 stop = true;
+                p.y--;
             }
             //Déplacement vers la droite
-            else if ((rep == 'D' || rep == 'd') && (p.x<21)){
+            else if ((rep == 'D' || rep == 'd') && (p.x<length(donjon,2))&& (pieceValide(donjon, p.y, p.x+1))){
                 stop = true;
+                p.x++;
             }
             // On recommence la saisie de touche car la touche ne correspond pas au déplacement
             else{
