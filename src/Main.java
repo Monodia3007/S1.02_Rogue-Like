@@ -11,22 +11,19 @@ class Main extends Program{
             newPiece('R', 0.6),
             newPiece('H', 0.0),
             newPiece('B', 0.0)
-    }
-    final int NB_PIECE_PAR_ETAGE = 10;
-    Donjon donjonAlpha = newDonjon();
-    donjon.etageActuel = new Piece[][] {
-            {PIECES[4], PIECES[0]},
-            {PIECES[2], PIECES[3]},
-            {PIECES[2], PIECES[0]},
-            {PIECES[2], PIECES[2]},
-            {PIECES[0], PIECES[2]},
-            {PIECES[0], PIECES[1]}
     };
-    donjon.numeroEtage = 0;
+    final int NB_PIECE_PAR_ETAGE = 10;
 
     Donjon newDonjon() {
         Donjon donjon = new Donjon();
-        donjon.etageActuel = new Piece[COTE][COTE];
+        donjon.etageActuel = new Piece[][] {
+                {PIECES[4], PIECES[0]},
+                {PIECES[2], PIECES[3]},
+                {PIECES[2], PIECES[0]},
+                {PIECES[2], PIECES[2]},
+                {PIECES[0], PIECES[2]},
+                {PIECES[0], PIECES[1]}
+        };
         donjon.numeroEtage = 0;
         return donjon;
     }
@@ -245,7 +242,7 @@ class Main extends Program{
         String pseudo = "";
         println("Nouvelle partie : 1                     Reprendre une partie : 2");
         tmp = readInt();
-        donjon = new
+        Donjon donjon = newDonjon();
         if (tmp == 1){
             println("Entrez votre pseudo : ");
             pseudo = readString();
