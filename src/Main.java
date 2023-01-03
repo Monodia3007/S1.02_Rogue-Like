@@ -109,7 +109,7 @@ class Main extends Program{
             println("Appuyer sur Z pour aller en haut, Q pour aller a gauche, S pour aller en bas, et D pour aller a droite");
             rep = readChar();
             //Déplacement vers le haut
-            if ((rep== 'Z' || rep == 'z') && (p.y<length(donjon,1)) && (pieceValide(donjon, p.y+1, p.x))){
+            if ((rep== 'Z' || rep == 'z') && (p.y<length(donjon.etageActuel,1)) && (pieceValide(donjon, p.y+1, p.x))){
                 stop = true;
                 p.y++;
             }
@@ -124,7 +124,7 @@ class Main extends Program{
                 p.y--;
             }
             //Déplacement vers la droite
-            else if ((rep == 'D' || rep == 'd') && (p.x<length(donjon,2))&& (pieceValide(donjon, p.y, p.x+1))){
+            else if ((rep == 'D' || rep == 'd') && (p.x<length(donjon.etageActuel,2))&& (pieceValide(donjon, p.y, p.x+1))){
                 stop = true;
                 p.x++;
             }
@@ -243,22 +243,50 @@ class Main extends Program{
             println("VOUS AVEZ PERDUE");
         }
         else{
-            println("VOUS AVEZ GAGNER!!!");
+            println("VOUS AVEZ GAGNÉ!!!");
         }
         
     }
+
+
+
+    void afficher(Donjon donjon, Player p){
+        clearScreen();
+        println(p.nickname);
+        for (int i=0; i<length(donjon.etageActuel,1); i++){
+            for (int j=0; j<length(donjon.etageActuel,2); j++){
+                if(p.x == i && p.y==j){
+                    print('P');
+                }
+                else{
+                    print(donjon.etageActuel[i][j].type);
+                }
+            }
+            println();
+        }
+        for(int i = 0; i<3; i++){
+            println();
+        }
+        println("Nombre de Vie : " + p.life + "                                          Nombre d'Indice : " + p.hint);
+    }
+
 
     void algorithm(){
         int tmp = 0;
         Player p;
         String pseudo = "";
+
         println("Nouvelle partie : 1                     Reprendre une partie : 2");
         tmp = readInt();
         Donjon donjon = newDonjon();
+
         if (tmp == 1){
+            clearScreen();
             println("Entrez votre pseudo : ");
             pseudo = readString();
             p = newPlayer(pseudo);
+
+            afficher(donjon,p);
         }
         
     }
