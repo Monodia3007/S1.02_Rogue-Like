@@ -270,6 +270,10 @@ class Main extends Program{
         println("Nombre de Vie : " + p.life + "                                          Nombre d'Indice : " + p.hint);
     }
 
+    String RGBToANSI(int[] rgb, boolean backgroundColor) {
+        return "\u001b[" + (backgroundColor ? "48" : "38") + ";2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m";
+    }
+
 
     void algorithm(){
         int tmp = 0;
