@@ -12,6 +12,7 @@ class Main extends Program{
             newPiece('H', 0.0),
             newPiece('B', 0.0)
     };
+
     final int NB_PIECE_PAR_ETAGE = 10;
 
     Donjon newDonjon() {
@@ -77,7 +78,6 @@ class Main extends Program{
         p.y=10;
     }
 
-
     Player newPlayer(String nickname){
         //Création d'un nouvelle éléement de la classe joueur
         Player p = new Player();
@@ -99,7 +99,6 @@ class Main extends Program{
         return true;
     }
     
-
     void deplacement(Player p, Donjon donjon){
         boolean stop = false;
         char rep= ' ';
@@ -136,7 +135,6 @@ class Main extends Program{
         }
     }
 
-
     void question(String[][] QR, int ligne, Player p){
         boolean stop = false;
         String rep = "";
@@ -171,7 +169,6 @@ class Main extends Program{
             }
         }
     }
-
 
     void questionBoss(String[][] QR, int ligne, Player p){
         boolean stop = false;
@@ -247,8 +244,6 @@ class Main extends Program{
         }
         
     }
-
-
 
     void afficher(Donjon donjon, Player p){
         clearScreen();
