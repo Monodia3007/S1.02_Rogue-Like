@@ -37,7 +37,7 @@ class Main extends Program{
     }
 
     void fetchQR(String filename){
-        //Nous chargeon le fichier possédant les question, les réponses et les indice.
+        //Nous chargeons le fichier possédant les questions, les réponses et les indice.
         CSVFile file = loadCSV(filename);
         //initialisation du tableau avec la taille du fichier.
         questionReponse = new String[rowCount(file)][columnCount(file)];
@@ -50,7 +50,7 @@ class Main extends Program{
     }
 
     void fetchQRB(String filename){
-        //Nous chargeon le fichier possédant les question, les réponses et les indice du boss.
+        //Nous chargeons le fichier possédant les questions, les réponses et les indice du boss.
         CSVFile file = loadCSV(filename);
         //initialisation du tableau avec la taille du fichier.
         questionReponseBoss = new String[rowCount(file)][columnCount(file)];
@@ -63,9 +63,9 @@ class Main extends Program{
     }
     
     boolean gameOver(int life){
-        //si le joueur na plus de vie
+        //si le joueur n'a plus de vie
         if (life<1){
-            // partie fini
+            // partie finie
             return true;
         }
         else{
@@ -73,62 +73,59 @@ class Main extends Program{
         }
     }
 
-    void initPosition(Player p){
-        p.x=10;
-        p.y=10;
-    }
-
     Player newPlayer(String nickname){
-        //Création d'un nouvelle éléement de la classe joueur
+        //Création d'un nouvel élément de la classe joueur
         Player p = new Player();
-        //Iniialisation du pseudo
+        //Initialisation du pseudo
 		p.nickname=nickname;
-        //Iniialisation du noumbre de vie
+        //Initialisation du nombre de vies
 		p.life=3;
-        //Iniialisation du nombre d'indice
+        //Initialisation du nombre d'indices
         p.hint=0;
-        //Iniialisation de la position du joueur
-        initPosition(p);
+        //Initialisation de la position du joueur
+        p.x=1;
+        p.y=5;
 		return p;
     }
 
     boolean pieceValide(Donjon donjon, int x, int y){
-        if(donjon.etageActuel[y][x].type == 'V'){
+        if((x < 0 || x >= length(donjon.etageActuel, 2) || (y < 0 || y >= length(donjon.etageActuel, 1))) || donjon.etageActuel[y][x].type == 'V'){
             return false;
         }
         return true;
     }
-    
+
     void deplacement(Player p, Donjon donjon){
         boolean stop = false;
-        char rep= ' ';
-        // Tant que le déplacement n'est pas éffectuer
+        char rep = ' ';
+        // Tant que le déplacement n'est pas effectué
         while (!stop){
             println("Ou voulez vous aller ? ");
             println("Appuyer sur Z pour aller en haut, Q pour aller a gauche, S pour aller en bas, et D pour aller a droite");
             rep = readChar();
             //Déplacement vers le haut
-            if ((rep== 'Z' || rep == 'z') && (p.y<length(donjon.etageActuel,1)) && (pieceValide(donjon, p.y+1, p.x))){
+            if ((rep == 'Z' || rep == 'z') && (pieceValide(donjon, p.x, p.y - 1))){
                 stop = true;
-                p.y++;
+                p.y--;
             }
             //Déplacement vers la gauche
-            else if ((rep == 'Q' || rep == 'q') && (p.x>0) && (pieceValide(donjon, p.y, p.x-1))){
+            else if ((rep == 'Q' || rep == 'q') && (pieceValide(donjon, p.x - 1, p.y))){
                 stop = true;
                 p.x--;
             }
             //Déplacement vers le bas
-            else if ((rep == 'S' || rep == 's') && (p.y>0) && (pieceValide(donjon, p.y-1, p.x))){
+            else if ((rep == 'S' || rep == 's') && (pieceValide(donjon, p.x, p.y + 1))){
                 stop = true;
-                p.y--;
+                p.y++;
             }
             //Déplacement vers la droite
-            else if ((rep == 'D' || rep == 'd') && (p.x<length(donjon.etageActuel,2))&& (pieceValide(donjon, p.y, p.x+1))){
+            else if ((rep == 'D' || rep == 'd') && (pieceValide(donjon, p.x + 1, p.y))){
                 stop = true;
                 p.x++;
             }
-            // On recommence la saisie de touche car la touche ne correspond pas au déplacement
-            else{
+            // On recommence la saisie de touche, car la touche ne correspond pas au déplacement
+            else {
+                afficher(donjon, p);
                 println("Veuillez taper une touche valide. ");
             }
             
@@ -138,25 +135,25 @@ class Main extends Program{
     void question(String[][] QR, int ligne, Player p){
         boolean stop = false;
         String rep = "";
-        //Tant que la question n'a pas été répondu ou que le joueur a des vie
+        //Tant que la question n'a pas été répondu ou que le joueur a des vies
         while (!stop && p.life>0){
             //Affichage de la question
             println("Question : " + QR[ligne][0]);
-            //récupération de la réponsse
+            //récupération de la réponse
             rep = readString();
             //Si la réponse du joueur est bonne
             if (equals(rep,QR[ligne][1])){
                 println("Bien jouer");
-                //On arrète la boucle
+                //On arrête la boucle
                 stop = true;
             }
             else{
-                //Sinon on lui enlève une vie et il recommence
+                //Sinon, on lui enlève une vie et il recommence
                 println("Rater");
                 p.life--;
             }
         }
-        // Donne une chance d'obtenire un bonus
+        // Donne une chance d'obtenir un bonus
         if (stop){
             int r = random(1,11);
             //30% de chance de d'obtenir un point de vie en plus
@@ -175,43 +172,43 @@ class Main extends Program{
         String rep = "";
         char repHint = ' ';
         boolean hintOn = false;
-        //Tant que la question n'a pas été répondu ou que le joueur à des vie
+        //Tant que la question n'a pas été répondu ou que le joueur à des vies
         while (!stop && p.life>0){
             //Affichage de la question
             println("Question : " + QR[ligne][0]);
-            //Si le joueur n'a pas encore utiliser d'indice 
+            //Si le joueur n'a pas encore utilisé d'indice
             if(hintOn=false){
-                //On lui demande si il veut en utiliser
+                //On lui demande s'il veut en utiliser
                 println("Voulez vous un indice ? o/n");
                 repHint = readChar();
-                //Si oui alors on lui conssomme un indice
+                //Si oui alors on lui consomme un indice
                 if (repHint=='o'){
                     hintOn=true;
                     p.hint--;
                 }
             }
             clearScreen();
-            //On re-affhiche la question
+            //On re-affiche la question
             println("Question : " + QR[ligne][0]);
 
-            //Si le joueura un l'indice d'actif
+            //Si le joueur a un indice d'actif
             if(hintOn){
                 //On affiche l'indice
                 println("Indice : " + QR[ligne][2]);
             }
 
-            //On récupère la réponssse
+            //On récupère la response
             rep = readString();
 
             //Si la réponse du joueur est bonne
             if (equals(rep,QR[ligne][1])){
-                //On dit au combat de s'arrèté
+                //On dit au combat de s'arrêter
                 println("Bien jouer");
                 stop = true;
                 hintOn = false;
             }
             else{
-                //Sinon on lui enlève une vie et il recommence
+                //Sinon, on lui enlève une vie et il recommence
                 println("Rater");
                 p.life--;
             }
@@ -229,17 +226,17 @@ class Main extends Program{
     }
 
     int random(int min, int max){
-        //On récupère un nombre randome entre 0 et max exclu
+        //On récupère un nombre random entre 0 et max exclu
         int range = max - min;
         return (int)(random()*range)+min;
     }
 
-    void Fin(Player p){
+    void fin(Player p, Donjon donjon, int nbEtage){
         clearScreen();
         if(gameOver(p.life)){
             println("VOUS AVEZ PERDUE");
         }
-        else{
+        else if (donjon.numeroEtage >= nbEtage){
             println("VOUS AVEZ GAGNÉ!!!");
         }
         
@@ -250,7 +247,7 @@ class Main extends Program{
         println(p.nickname);
         for (int i=0; i<length(donjon.etageActuel,1); i++){
             for (int j=0; j<length(donjon.etageActuel,2); j++){
-                if(p.x == i && p.y==j){
+                if(p.x == j && p.y==i){
                     print('P');
                 }
                 else{
@@ -274,6 +271,8 @@ class Main extends Program{
         int tmp = 0;
         Player p;
         String pseudo = "";
+        int nbEtages = 1;
+        boolean fini = false;
 
         println("Nouvelle partie : 1                     Reprendre une partie : 2");
         tmp = readInt();
@@ -286,7 +285,18 @@ class Main extends Program{
             p = newPlayer(pseudo);
 
             afficher(donjon,p);
+            while (!fini) {
+                deplacement(p, donjon);
+                afficher(donjon, p);
+            }
         }
-        
+    }
+
+
+    void testPieceValide(){
+        Donjon donjon = newDonjon();
+        Player p = newPlayer("pseudo");
+        assertTrue(pieceValide(donjon, p.x, p.y++));
+        assertFalse(pieceValide(donjon, p.x++, p.y));
     }
 }
