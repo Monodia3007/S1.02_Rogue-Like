@@ -6,19 +6,23 @@ class Main extends Program{
     String[][] questionReponseBoss;
     final int COTE = 21;
     final Piece[] PIECES = new Piece[]{
-            newPiece('V', 0.0),
-            newPiece('S', 0.0),
-            newPiece('R', 0.6),
-            newPiece('H', 0.0),
-            newPiece('B', 0.0)
+            newPiece('V', 0.0, new int[0][0]),
+            newPiece('S', 0.0, fetchApparencePiece("../ressources/startRoom.csv")),
+            newPiece('R', 0.6, fetchApparencePiece("../ressources/standartRoom.csv")),
+            newPiece('H', 0.0, fetchApparencePiece("../ressources/hintRoom.csv")),
+            newPiece('B', 0.0, fetchApparencePiece("../ressources/bossRoom.csv")),
+            newPiece('U', 0.0, fetchApparencePiece("../ressources/stairRoom.csv"))
     };
 
     final int NB_PIECE_PAR_ETAGE = 10;
+
+    int[][] colors;
 
     Donjon newDonjon() {
         //Constructeur du type Donjon
         Donjon donjon = new Donjon();
         donjon.etageActuel = new Piece[][] {
+                {PIECES[5], PIECES[0]},
                 {PIECES[4], PIECES[0]},
                 {PIECES[2], PIECES[3]},
                 {PIECES[2], PIECES[0]},
@@ -30,15 +34,37 @@ class Main extends Program{
         return donjon;
     }
 
-    Piece newPiece (char type, double spawnRate) {
+    Piece newPiece (char type, double spawnRate, int[][] apparence) {
         //Constructeur du type Piece
         Piece piece = new Piece();
         piece.type = type;
         piece.spawnRate = spawnRate;
+        piece.apparence = apparence;
         return piece;
     }
 
-    void fetchQR(String filename){
+    void fetchColors () {
+        CSVFile file = loadCSV("../ressources/0-colors.csv");
+        colors = new int[rowCount(file)][columnCount(file)];
+        for (int i = 0; i < rowCount(file); i++){
+            for (int j = 0; j < columnCount(file); j++){
+                colors[i][j] = stringToInt(getCell(file, i, j));
+            }
+        }
+    }
+
+    int[][] fetchApparencePiece(String filename) {
+        CSVFile file = loadCSV(filename);
+        int [][] apparence = new int[rowCount(file)][columnCount(file)];
+        for (int i = 0; i < rowCount(file); i++){
+            for (int j = 0; j < columnCount(file); j++){
+                apparence[i][j] = stringToInt(getCell(file, i, j));
+            }
+        }
+        return apparence;
+    }
+
+    void fetchQR (String filename){
         //Nous chargeons le fichier possédant les questions, les réponses et les indice.
         CSVFile file = loadCSV(filename);
         //initialisation du tableau avec la taille du fichier.
@@ -46,7 +72,7 @@ class Main extends Program{
         //Remplissage du tableau
         for (int i=0;i<rowCount(file);i++){
             for (int j=0;j<columnCount(file);j++){
-                questionReponse[i][j]=getCell(file,i,j);
+                questionReponse[i][j]= getCell(file,i,j);
             }
         }
     }
@@ -273,8 +299,18 @@ class Main extends Program{
         print(color + "  " + ANSI_RESET);
     }
 
+    void afficherPiece(Donjon donjon, Player p) {
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j < 13; j++) {
+                printPixel(RGBToANSI(colors[donjon.etageActuel[p.y][p.x].apparence[i][j]], true));
+            }
+            println();
+        }
+    }
+
 
     void algorithm(){
+        fetchColors();
         int tmp = 0;
         Player p;
         String pseudo = "";
@@ -291,10 +327,10 @@ class Main extends Program{
             pseudo = readString();
             p = newPlayer(pseudo);
 
-            afficherCarte(donjon,p);
+            afficherPiece(donjon,p);
             while (!fini) {
                 deplacement(p, donjon);
-                afficherCarte(donjon, p);
+                afficherPiece(donjon, p);
                 cursor(30,48);
                 background(RGBToANSI(new int[]{0,200,0}, true));
             }
