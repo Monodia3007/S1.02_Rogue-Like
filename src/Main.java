@@ -127,7 +127,7 @@ class Main extends Program{
             }
             // On recommence la saisie de touche, car la touche ne correspond pas au déplacement
             else {
-                afficher(donjon, p);
+                afficherCarte(donjon, p);
                 println("Veuillez taper une touche valide. ");
             }
             
@@ -269,6 +269,10 @@ class Main extends Program{
         return "\u001b[" + (backgroundColor ? "48" : "38") + ";2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m";
     }
 
+    void printPixel(String color) {
+        print(color + "  " + ANSI_RESET);
+    }
+
 
     void algorithm(){
         int tmp = 0;
@@ -291,6 +295,8 @@ class Main extends Program{
             while (!fini) {
                 deplacement(p, donjon);
                 afficherCarte(donjon, p);
+                cursor(30,48);
+                background(RGBToANSI(new int[]{0,200,0}, true));
             }
         }
     }
