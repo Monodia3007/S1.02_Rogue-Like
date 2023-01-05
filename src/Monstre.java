@@ -1,3 +1,0 @@
-class Monstre{
-    String nom;
-}
