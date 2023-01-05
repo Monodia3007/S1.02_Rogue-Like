@@ -16,6 +16,7 @@ class Main extends Program{
     final int NB_PIECE_PAR_ETAGE = 10;
 
     Donjon newDonjon() {
+        //Constructeur du type Donjon
         Donjon donjon = new Donjon();
         donjon.etageActuel = new Piece[][] {
                 {PIECES[4], PIECES[0]},
@@ -30,6 +31,7 @@ class Main extends Program{
     }
 
     Piece newPiece (char type, double spawnRate) {
+        //Constructeur du type Piece
         Piece piece = new Piece();
         piece.type = type;
         piece.spawnRate = spawnRate;
@@ -242,7 +244,8 @@ class Main extends Program{
         
     }
 
-    void afficher(Donjon donjon, Player p){
+    void afficherCarte(Donjon donjon, Player p){
+        //Fonction permettant de l'affichage de la carte du donjon
         clearScreen();
         println(p.nickname);
         for (int i=0; i<length(donjon.etageActuel,1); i++){
@@ -284,10 +287,10 @@ class Main extends Program{
             pseudo = readString();
             p = newPlayer(pseudo);
 
-            afficher(donjon,p);
+            afficherCarte(donjon,p);
             while (!fini) {
                 deplacement(p, donjon);
-                afficher(donjon, p);
+                afficherCarte(donjon, p);
             }
         }
     }
