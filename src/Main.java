@@ -153,7 +153,7 @@ class Main extends Program{
             }
             // On recommence la saisie de touche, car la touche ne correspond pas au déplacement
             else {
-                afficherCarte(donjon, p);
+                afficherPiece(donjon, p);
                 println("Veuillez taper une touche valide. ");
             }
             
@@ -300,6 +300,7 @@ class Main extends Program{
     }
 
     void afficherPiece(Donjon donjon, Player p) {
+        clearScreen();
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 13; j++) {
                 printPixel(RGBToANSI(colors[donjon.etageActuel[p.y][p.x].apparence[i][j]], true));
