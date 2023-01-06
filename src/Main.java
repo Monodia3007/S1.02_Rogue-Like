@@ -105,14 +105,14 @@ class Main extends Program{
         //Création d'un nouvel élément de la classe joueur
         Player p = new Player();
         //Initialisation du pseudo
-		p.nickname=nickname;
+		p.nickname = nickname;
         //Initialisation du nombre de vies
-		p.life=3;
+		p.life = 3;
         //Initialisation du nombre d'indices
-        p.hint=0;
+        p.hint = 0;
         //Initialisation de la position du joueur
-        p.x=1;
-        p.y=5;
+        p.x = 1;
+        p.y = 6;
 		return p;
     }
 
@@ -123,13 +123,14 @@ class Main extends Program{
         return true;
     }
 
-    void deplacement(Player p, Donjon donjon){
+    void action(Player p, Donjon donjon){
         boolean stop = false;
         char rep = ' ';
         // Tant que le déplacement n'est pas effectué
         while (!stop){
             println("Ou voulez vous aller ? ");
-            println("Appuyer sur Z pour aller en haut, Q pour aller a gauche, S pour aller en bas, et D pour aller a droite");
+            println("Appuyer sur Z pour aller en haut, Q pour aller a gauche,\nS pour aller en bas, et D pour aller a droite");
+            println("E pour sauvegarder en dehors d'une salle de boss et \nU pour monter d'étage si vous êtes dans la bonne pièce");
             rep = readChar();
             //Déplacement vers le haut
             if ((rep == 'Z' || rep == 'z') && (pieceValide(donjon, p.x, p.y - 1))){
@@ -150,6 +151,11 @@ class Main extends Program{
             else if ((rep == 'D' || rep == 'd') && (pieceValide(donjon, p.x + 1, p.y))){
                 stop = true;
                 p.x++;
+            }
+            // Sauvegarde
+            else if ((rep == 'E' || rep == 'e') && (donjon.etageActuel[p.y][p.x].type != 'B')){
+                saveDonjon(donjon);
+                savePlayer(p);
             }
             // On recommence la saisie de touche, car la touche ne correspond pas au déplacement
             else {
@@ -186,11 +192,11 @@ class Main extends Program{
             int r = random(1,11);
             //30% de chance de d'obtenir un point de vie en plus
             if(r>7){
-                getLife(p);
+                addLife(p);
             }
             //10% de chance d'obtenir un indice contre un boss
             else if(r<2){
-                getHint(p);
+                addHint(p);
             }
         }
     }
@@ -243,12 +249,12 @@ class Main extends Program{
         }
     }
 
-    void getHint(Player p){
+    void addHint(Player p){
         //On rajoute un indice au joueur
         p.hint++;
     }
 
-    void getLife(Player p){
+    void addLife(Player p){
         //On rajoute un indice au joueur
         p.life++;
     }
@@ -301,6 +307,7 @@ class Main extends Program{
 
     void afficherPiece(Donjon donjon, Player p) {
         clearScreen();
+        println(p.nickname);
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 13; j++) {
                 printPixel(RGBToANSI(colors[donjon.etageActuel[p.y][p.x].apparence[i][j]], true));
@@ -309,11 +316,69 @@ class Main extends Program{
         }
     }
 
+    void savePlayer(Player p) {
+        saveCSV(new String[][]{{p.nickname, "" + p.life, "" + p.hint, "" + p.x, "" + p.y}}, "../ressources/SavedPlayer.csv");
+    }
+
+    void saveDonjon(Donjon donjon) {
+        String[][] savedDonjon = new String[length(donjon.etageActuel, 1) + 1][length(donjon.etageActuel, 2)];
+        for (int i = 0; i < length(savedDonjon, 1) - 1; i++) {
+            for (int j = 0; j < length(savedDonjon, 2); j++) {
+                savedDonjon[i][j] = "" + donjon.etageActuel[i][j].type;
+            }
+        }
+        savedDonjon[length(donjon.etageActuel, 1)][0] = "" + donjon.numeroEtage;
+        saveCSV(savedDonjon, "../ressources/SavedDonjon.csv");
+    }
+
+    Player loadPlayer() {
+        Player loadedPlayer = newPlayer("");
+        CSVFile file = loadCSV("../ressources/SavedPlayer.csv");
+        loadedPlayer.nickname = getCell(file, 0, 0);
+        loadedPlayer.life = stringToInt(getCell(file, 0, 1));
+        loadedPlayer.hint = stringToInt(getCell(file, 0, 2));
+        loadedPlayer.x = stringToInt(getCell(file, 0, 3));
+        loadedPlayer.y = stringToInt(getCell(file, 0, 4));
+        return loadedPlayer;
+    }
+
+    Donjon loadDonjon() {
+        Donjon loadedDonjon = newDonjon();
+        CSVFile file = loadCSV("../ressources/SavedDonjon.csv");
+        String[][] tempDonjon = new String[rowCount(file)][columnCount(file)];
+        loadedDonjon.etageActuel = new Piece[rowCount(file) - 1][columnCount(file)];
+        for (int i=0;i<rowCount(file);i++){
+            for (int j=0;j<columnCount(file);j++){
+                tempDonjon[i][j]=getCell(file,i,j);
+            }
+        }
+        loadedDonjon.numeroEtage = stringToInt(tempDonjon[rowCount(file) - 1][0]);
+        for (int i = 0; i < length(tempDonjon, 1) - 1; i++) {
+            for (int j = 0; j < length(tempDonjon, 2); j++) {
+                if (tempDonjon[i][j] == "V") {
+                    loadedDonjon.etageActuel[i][j] = PIECES[0];
+                } else if (tempDonjon[i][j] == "S") {
+                    loadedDonjon.etageActuel[i][j] = PIECES[1];
+                } else if (tempDonjon[i][j] == "R") {
+                    loadedDonjon.etageActuel[i][j] = PIECES[2];
+                } else if (tempDonjon[i][j] == "H") {
+                    loadedDonjon.etageActuel[i][j] = PIECES[3];
+                } else if (tempDonjon[i][j] == "B") {
+                    loadedDonjon.etageActuel[i][j] = PIECES[4];
+                } else {
+                    loadedDonjon.etageActuel[i][j] = PIECES[5];
+                }
+            }
+        }
+        return loadedDonjon;
+    }
+
 
     void algorithm(){
+        clearScreen();
         fetchColors();
         int tmp = 0;
-        Player p;
+        Player p = newPlayer("");
         String pseudo = "";
         int nbEtages = 1;
         boolean fini = false;
@@ -322,19 +387,21 @@ class Main extends Program{
         tmp = readInt();
         Donjon donjon = newDonjon();
 
-        if (tmp == 1){
+        if (tmp == 1) {
             clearScreen();
             println("Entrez votre pseudo : ");
             pseudo = readString();
-            p = newPlayer(pseudo);
-
-            afficherPiece(donjon,p);
-            while (!fini) {
-                deplacement(p, donjon);
-                afficherPiece(donjon, p);
-                cursor(30,48);
-                background(RGBToANSI(new int[]{0,200,0}, true));
-            }
+            p.nickname = pseudo;
+            afficherPiece(donjon, p);
+        } else if (tmp == 2) {
+            clearScreen();
+            p = loadPlayer();
+            donjon = loadDonjon();
+            afficherPiece(donjon, p);
+        }
+        while (!fini) {
+            action(p, donjon);
+            afficherPiece(donjon, p);
         }
     }
 
