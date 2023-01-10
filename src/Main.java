@@ -396,6 +396,15 @@ class Main extends Program{
         return loadedDonjon;
     }
 
+    void rencontre(Donjon donjon,Player p){
+        if(donjon.etageActuel[p.y][p.x].type == 'B'){
+            questionBoss(questionReponseBoss,random(0,length(questionReponseBoss,1)),p);
+        }
+        else if(){
+
+        }
+    }
+
 
  void algorithm(){
         clearScreen();
