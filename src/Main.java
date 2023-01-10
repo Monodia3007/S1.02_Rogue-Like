@@ -2,8 +2,8 @@ import extensions.CSVFile;
 
 class Main extends Program{
 
-    String[][] questionReponse;
-    String[][] questionReponseBoss;
+    String[][] questionReponse = fetchQR("../ressources/Question.csv");
+    String[][] questionReponseBoss = fetchQRB("../ressources/QuestionB.csv");
     final int COTE = 21;
     final Piece[] PIECES = new Piece[]{
             newPiece('V', 0.0, new int[0][0]),
@@ -64,7 +64,7 @@ class Main extends Program{
         return apparence;
     }
 
-    void fetchQR (String filename){
+    String[][] fetchQR (String filename){
         //Nous chargeons le fichier possédant les questions, les réponses et les indice.
         CSVFile file = loadCSV(filename);
         //initialisation du tableau avec la taille du fichier.
@@ -75,9 +75,10 @@ class Main extends Program{
                 questionReponse[i][j]= getCell(file,i,j);
             }
         }
+        return questionReponse;
     }
 
-    void fetchQRB(String filename){
+    String[][] fetchQRB(String filename){
         //Nous chargeons le fichier possédant les questions, les réponses et les indice du boss.
         CSVFile file = loadCSV(filename);
         //initialisation du tableau avec la taille du fichier.
@@ -88,6 +89,7 @@ class Main extends Program{
                 questionReponseBoss[i][j]=getCell(file,i,j);
             }
         }
+        return questionReponseBoss;
     }
     
     boolean gameOver(int life){
@@ -208,7 +210,7 @@ class Main extends Program{
         }
     }
 
-    void Up(Donjon donjon, Player p){
+    void up(Donjon donjon, Player p){
         donjon.numeroEtage++;
         p.x=10;
         p.y=10;
@@ -406,7 +408,7 @@ class Main extends Program{
         println("================================================================");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
-        println("||~~~~~~~~~~~~~~~~~~~~~~~~Titre du jeu~~~~~~~~~~~~~~~~~~~~~~~~||");
+        println("||~~~~~~~~~~~~~~~~~~~~~~~~EduCrawler~~~~~~~~~~~~~~~~~~~~~~~~||");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
         println("================================================================");
