@@ -208,6 +208,12 @@ class Main extends Program{
         }
     }
 
+    void Up(Donjon donjon, Player p){
+        numeroEtage++;
+        p.x=10;
+        p.y=10;
+    }
+
     void questionBoss(String[][] QR, int ligne, Player p){
         boolean stop = false;
         String rep = "";
@@ -272,12 +278,12 @@ class Main extends Program{
         return (int)(random()*range)+min;
     }
 
-    void fin(Player p, Donjon donjon, int nbEtage){
+    void fin(Player p, Donjon donjon){
         clearScreen();
         if(gameOver(p.life)){
             println("VOUS AVEZ PERDUE");
         }
-        else if (donjon.numeroEtage >= nbEtage){
+        else{
             println("VOUS AVEZ GAGNÉ!!!");
         }
         
@@ -370,15 +376,15 @@ class Main extends Program{
         loadedDonjon.numeroEtage = stringToInt(tempDonjon[rowCount(file) - 1][0]);
         for (int i = 0; i < length(tempDonjon, 1) - 1; i++) {
             for (int j = 0; j < length(tempDonjon, 2); j++) {
-                if (equals(tempDonjon[i][j], "V")) {
+                if (tempDonjon[i][j] == "V") {
                     loadedDonjon.etageActuel[i][j] = PIECES[0];
-                } else if (equals(tempDonjon[i][j], "S")) {
+                } else if (tempDonjon[i][j] == "S") {
                     loadedDonjon.etageActuel[i][j] = PIECES[1];
-                } else if (equals(tempDonjon[i][j], "R")) {
+                } else if (tempDonjon[i][j] == "R") {
                     loadedDonjon.etageActuel[i][j] = PIECES[2];
-                } else if (equals(tempDonjon[i][j], "H")) {
+                } else if (tempDonjon[i][j] == "H") {
                     loadedDonjon.etageActuel[i][j] = PIECES[3];
-                } else if (equals(tempDonjon[i][j], "B")) {
+                } else if (tempDonjon[i][j] == "B") {
                     loadedDonjon.etageActuel[i][j] = PIECES[4];
                 } else {
                     loadedDonjon.etageActuel[i][j] = PIECES[5];
@@ -389,7 +395,12 @@ class Main extends Program{
     }
 
 
-void algorithm(){
+
+
+
+
+
+    void algorithm(){
         clearScreen();
         fetchColors();
         int tmp = 0;
@@ -424,7 +435,11 @@ void algorithm(){
         while (!fini) {
             action(p, donjon);
             afficherPiece(donjon, p);
+            if(donjon.numeroEtage == 5 || p.life<=0){
+                fini = true;
+            }
         }
+        fin(p,donjon);
     }
 
 
