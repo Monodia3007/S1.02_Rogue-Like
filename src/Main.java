@@ -376,15 +376,15 @@ class Main extends Program{
         loadedDonjon.numeroEtage = stringToInt(tempDonjon[rowCount(file) - 1][0]);
         for (int i = 0; i < length(tempDonjon, 1) - 1; i++) {
             for (int j = 0; j < length(tempDonjon, 2); j++) {
-                if (tempDonjon[i][j] == "V") {
+                if (equals(tempDonjon[i][j], "V")) {
                     loadedDonjon.etageActuel[i][j] = PIECES[0];
-                } else if (tempDonjon[i][j] == "S") {
+                } else if (equals(tempDonjon[i][j], "S")) {
                     loadedDonjon.etageActuel[i][j] = PIECES[1];
-                } else if (tempDonjon[i][j] == "R") {
+                } else if (equals(tempDonjon[i][j], "R")) {
                     loadedDonjon.etageActuel[i][j] = PIECES[2];
-                } else if (tempDonjon[i][j] == "H") {
+                } else if (equals(tempDonjon[i][j], "H")) {
                     loadedDonjon.etageActuel[i][j] = PIECES[3];
-                } else if (tempDonjon[i][j] == "B") {
+                } else if (equals(tempDonjon[i][j], "B")) {
                     loadedDonjon.etageActuel[i][j] = PIECES[4];
                 } else {
                     loadedDonjon.etageActuel[i][j] = PIECES[5];
