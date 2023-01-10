@@ -395,12 +395,7 @@ class Main extends Program{
     }
 
 
-
-
-
-
-
-    void algorithm(){
+ void algorithm(){
         clearScreen();
         fetchColors();
         int tmp = 0;
