@@ -209,7 +209,7 @@ class Main extends Program{
     }
 
     void Up(Donjon donjon, Player p){
-        numeroEtage++;
+        donjon.numeroEtage++;
         p.x=10;
         p.y=10;
     }
