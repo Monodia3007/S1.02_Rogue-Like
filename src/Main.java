@@ -65,7 +65,7 @@ class Main extends Program{
     }
 
     String[][] fetchQR (String filename){
-        //Nous chargeons le fichier possédant les questions, les réponses et les indice.
+        //Nous chargeons le fichier possédant les questions, les réponses.
         CSVFile file = loadCSV(filename);
         //initialisation du tableau avec la taille du fichier.
         questionReponse = new String[rowCount(file)][columnCount(file)];
@@ -400,8 +400,8 @@ class Main extends Program{
         if(donjon.etageActuel[p.y][p.x].type == 'B'){
             questionBoss(questionReponseBoss,random(0,length(questionReponseBoss,1)),p);
         }
-        else if(){
-
+        else if (random() < donjon.etageActuel[p.y][p.x].spawnRate){
+            question(questionReponse, random(0,length(questionReponse,1)), p);
         }
     }
 
@@ -417,7 +417,7 @@ class Main extends Program{
         println("================================================================");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
-        println("||~~~~~~~~~~~~~~~~~~~~~~~~EduCrawler~~~~~~~~~~~~~~~~~~~~~~~~||");
+        println("||~~~~~~~~~~~~~~~~~~~~~~~~~EduCrawler~~~~~~~~~~~~~~~~~~~~~~~~~||");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
         println("================================================================");
@@ -440,6 +440,7 @@ class Main extends Program{
         }
         while (!fini) {
             action(p, donjon);
+            rencontre(donjon, p);
             afficherPiece(donjon, p);
             if(donjon.numeroEtage == 5 || p.life<=0){
                 fini = true;
