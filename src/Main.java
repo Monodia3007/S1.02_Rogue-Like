@@ -129,8 +129,8 @@ class Main extends Program{
         // Tant que le déplacement n'est pas effectué
         while (!stop){
             println("Ou voulez vous aller ? ");
-            println("Appuyer sur Z pour aller en haut, Q pour aller a gauche,\nS pour aller en bas, et D pour aller a droite");
-            println("E pour sauvegarder en dehors d'une salle de boss et \nU pour monter d'étage si vous êtes dans la bonne pièce");
+            println("Appuyer sur Z pour aller en haut,\nQ pour aller a gauche,\nS pour aller en bas,\net D pour aller a droite");
+            println("E pour sauvegarder en dehors d'une salle de boss et \nU pour monter d'étage si vous êtes dans la bonne pièce \nM pour afficher la carte");
             rep = readChar();
             //Déplacement vers le haut
             if ((rep == 'Z' || rep == 'z') && (pieceValide(donjon, p.x, p.y - 1))){
@@ -156,6 +156,13 @@ class Main extends Program{
             else if ((rep == 'E' || rep == 'e') && (donjon.etageActuel[p.y][p.x].type != 'B')){
                 saveDonjon(donjon);
                 savePlayer(p);
+                clearScreen();
+                afficherPiece(donjon,p);
+                println("Sauvegarde effectuer");
+            }
+            //Afficher la carte
+            else if ((rep == 'M' || rep == 'm') && (donjon.etageActuel[p.y][p.x].type != 'B')){
+                afficherCarte(donjon,p);
             }
             // On recommence la saisie de touche, car la touche ne correspond pas au déplacement
             else {
@@ -279,7 +286,11 @@ class Main extends Program{
     void afficherCarte(Donjon donjon, Player p){
         //Fonction permettant de l'affichage de la carte du donjon
         clearScreen();
+        println();
         println(p.nickname);
+        println();
+        println();  
+        String tmp = " ";
         for (int i=0; i<length(donjon.etageActuel,1); i++){
             for (int j=0; j<length(donjon.etageActuel,2); j++){
                 if(p.x == j && p.y==i){
@@ -294,7 +305,10 @@ class Main extends Program{
         for(int i = 0; i<3; i++){
             println();
         }
-        println("Nombre de Vie : " + p.life + "                                          Nombre d'Indice : " + p.hint);
+        println("Appuyer sur entrer pour fermer la carte");
+        tmp = readString();
+        clearScreen();
+        afficherPiece(donjon,p);
     }
 
     String RGBToANSI(int[] rgb, boolean backgroundColor) {
@@ -314,6 +328,7 @@ class Main extends Program{
             }
             println();
         }
+        println("Nombre de Vie : " + p.life + "                                          Nombre d'Indice : " + p.hint + "\n");
     }
 
     void savePlayer(Player p) {
@@ -374,6 +389,11 @@ class Main extends Program{
     }
 
 
+
+
+
+
+
     void algorithm(){
         clearScreen();
         fetchColors();
@@ -382,7 +402,13 @@ class Main extends Program{
         String pseudo = "";
         int nbEtages = 1;
         boolean fini = false;
-
+        println("================================================================");
+        println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
+        println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
+        println("||~~~~~~~~~~~~~~~~~~~~~~~~Titre du jeu~~~~~~~~~~~~~~~~~~~~~~~~||");
+        println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
+        println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
+        println("================================================================");
         println("Nouvelle partie : 1                     Reprendre une partie : 2");
         tmp = readInt();
         Donjon donjon = newDonjon();
@@ -392,6 +418,7 @@ class Main extends Program{
             println("Entrez votre pseudo : ");
             pseudo = readString();
             p.nickname = pseudo;
+            clearScreen();
             afficherPiece(donjon, p);
         } else if (tmp == 2) {
             clearScreen();
