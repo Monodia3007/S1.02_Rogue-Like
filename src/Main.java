@@ -166,6 +166,9 @@ class Main extends Program{
             else if ((rep == 'M' || rep == 'm') && (donjon.etageActuel[p.y][p.x].type != 'B')){
                 afficherCarte(donjon,p);
             }
+            else if ((rep == 'U' || rep == 'u') && (donjon.etageActuel[p.y][p.x].type == 'U')){
+                up(donjon,p);
+            }
             // On recommence la saisie de touche, car la touche ne correspond pas au déplacement
             else {
                 afficherPiece(donjon, p);
@@ -215,8 +218,9 @@ class Main extends Program{
 
     void up(Donjon donjon, Player p){
         donjon.numeroEtage++;
-        p.x=10;
-        p.y=10;
+        p.x=1;
+        p.y=6;
+        afficherPiece(donjon,p);
     }
 
     void questionBoss(String[][] QR, int ligne, Player p){
@@ -227,7 +231,7 @@ class Main extends Program{
         //Tant que la question n'a pas été répondu ou que le joueur à des vies
         while (!stop && p.life>0){
             //Affichage de la question
-            println("Question : " + QR[ligne][0]);
+            println("Attention BOSS!!\nQuestion : " + QR[ligne][0]);
             //Si le joueur n'a pas encore utilisé d'indice
             if(hintOn=false){
                 //On lui demande s'il veut en utiliser
@@ -340,7 +344,7 @@ class Main extends Program{
             }
             println();
         }
-        println("Nombre de Vie : " + p.life + "                                          Nombre d'Indice : " + p.hint + "\n");
+        println("Nombre de Vie : " + p.life + "        Étage :" + donjon.numeroEtage + "          Nombre d'Indice : " + p.hint + "\n");
     }
 
     void savePlayer(Player p) {
@@ -407,6 +411,7 @@ class Main extends Program{
         else if (random() < donjon.etageActuel[p.y][p.x].spawnRate){
             question(questionReponse, random(0,length(questionReponse,1)), p);
         }
+
     }
 
 
