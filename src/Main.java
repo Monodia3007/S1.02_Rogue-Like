@@ -181,14 +181,17 @@ class Main extends Program{
         //Tant que la question n'a pas été répondu ou que le joueur a des vies
         while (!stop && p.life>0){
             //Affichage de la question
+            clearScreen();
+            println("Tu as " + p.life + " vie restante");
             println("Question : " + QR[ligne][0]);
             //récupération de la réponse
             rep = readString();
             //Si la réponse du joueur est bonne
             if (equals(rep,QR[ligne][1])){
-                println("Bien jouer");
+                println("Bien jouer\nAppuyer sur entrer pour continuer");
                 //On arrête la boucle
                 stop = true;
+                String tmp = readString();
             }
             else{
                 //Sinon, on lui enlève une vie et il recommence
@@ -252,9 +255,10 @@ class Main extends Program{
             //Si la réponse du joueur est bonne
             if (equals(rep,QR[ligne][1])){
                 //On dit au combat de s'arrêter
-                println("Bien jouer");
+                println("Bien jouer\nAppuyer sur entrer pour continuer");
                 stop = true;
                 hintOn = false;
+                String tmp = readString();
             }
             else{
                 //Sinon, on lui enlève une vie et il recommence
