@@ -1,10 +1,10 @@
 import extensions.CSVFile;
 
+
 class Main extends Program{
 
     String[][] questionReponse = fetchQuestion("../ressources/Question.csv");
     String[][] questionReponseBoss = fetchQuestion("../ressources/QuestionB.csv");
-    final int COTE = 21;
     final Piece[] PIECES = new Piece[]{
             newPiece('V', 0.0, new int[0][0]),
             newPiece('S', 0.0, fetchApparencePiece("../ressources/startRoom.csv")),
@@ -13,9 +13,6 @@ class Main extends Program{
             newPiece('B', 0.0, fetchApparencePiece("../ressources/bossRoom.csv")),
             newPiece('U', 0.0, fetchApparencePiece("../ressources/stairRoom.csv"))
     };
-
-    final int NB_PIECE_PAR_ETAGE = 10;
-
     int[][] colors;
 
     Donjon newDonjon() {
@@ -81,13 +78,8 @@ class Main extends Program{
     
     boolean gameOver(int life){
         //si le joueur n'a plus de vie
-        if (life<1){
-            // partie finie
-            return true;
-        }
-        else{
-            return false;
-        }
+        // partie finie
+        return life < 1;
     }
 
     Player newPlayer(String nickname){
@@ -106,15 +98,12 @@ class Main extends Program{
     }
 
     boolean pieceValide(Donjon donjon, int x, int y){
-        if((x < 0 || x >= length(donjon.etageActuel, 2) || (y < 0 || y >= length(donjon.etageActuel, 1))) || donjon.etageActuel[y][x].type == 'V'){
-            return false;
-        }
-        return true;
+        return (x >= 0 && x < length(donjon.etageActuel, 2) && (y >= 0 && y < length(donjon.etageActuel, 1))) && donjon.etageActuel[y][x].type != 'V';
     }
 
     void action(Player p, Donjon donjon){
         boolean stop = false;
-        char rep = ' ';
+        char rep;
         // Tant que le déplacement n'est pas effectué
         while (!stop){
             println("Ou voulez vous aller ? ");
@@ -167,7 +156,7 @@ class Main extends Program{
 
     void question(String[][] QR, int ligne, Player p){
         boolean stop = false;
-        String rep = "";
+        String rep;
         //Tant que la question n'a pas été répondu ou que le joueur a des vies
         while (!stop && p.life>0){
             //Affichage de la question
@@ -181,7 +170,7 @@ class Main extends Program{
                 println("Bien joué\nAppuyer sur entrer pour continuer");
                 //On arrête la boucle
                 stop = true;
-                String tmp = readString();
+                readString();
             }
             else{
                 //Sinon, on lui enlève une vie et il recommence
@@ -212,14 +201,14 @@ class Main extends Program{
 
     void questionBoss(String[][] QR, int ligne, Player p){
         boolean stop = false, hintOn = false;
-        String rep = "";
-        char repHint = ' ';
+        String rep;
+        char repHint;
         //Tant que la question n'a pas été répondu ou que le joueur à des vies
         while (!stop && p.life>0){
             //Affichage de la question
             println("Attention BOSS!!\nQuestion : " + QR[ligne][0]);
             //Si le joueur n'a pas encore utilisé d'indice
-            if(hintOn == false){
+            if(!hintOn){
                 //On lui demande s'il veut en utiliser
                 println("Voulez vous un indice ? o/n");
                 repHint = readChar();
@@ -248,7 +237,7 @@ class Main extends Program{
                 println("Bien joué\nAppuyer sur entrer pour continuer");
                 stop = true;
                 hintOn = false;
-                String tmp = readString();
+                readString();
             }
             else{
                 //Sinon, on lui enlève une vie et il recommence
@@ -274,7 +263,7 @@ class Main extends Program{
         return (int)(random()*range)+min;
     }
 
-    void fin(Player p, Donjon donjon){
+    void fin(Player p){
         clearScreen();
         if(gameOver(p.life)){
             println("VOUS AVEZ PERDUE");
@@ -291,8 +280,7 @@ class Main extends Program{
         println();
         println(p.nickname);
         println();
-        println();  
-        String tmp = " ";
+        println();
         for (int i=0; i<length(donjon.etageActuel,1); i++){
             for (int j=0; j<length(donjon.etageActuel,2); j++){
                 if(p.x == j && p.y==i){
@@ -308,13 +296,13 @@ class Main extends Program{
             println();
         }
         println("Appuyer sur entrer pour fermer la carte");
-        tmp = readString();
+        readString();
         clearScreen();
         afficherPiece(donjon,p);
     }
 
-    String RGBToANSI(int[] rgb, boolean backgroundColor) {
-        return "\u001b[" + (backgroundColor ? "48" : "38") + ";2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m";
+    String RGBToANSI(int[] rgb) {
+        return "\u001b[" + (true ? "48" : "38") + ";2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m";
     }
 
     void printPixel(String color) {
@@ -326,7 +314,7 @@ class Main extends Program{
         println(p.nickname);
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 13; j++) {
-                printPixel(RGBToANSI(colors[donjon.etageActuel[p.y][p.x].apparence[i][j]], true));
+                printPixel(RGBToANSI(colors[donjon.etageActuel[p.y][p.x].apparence[i][j]]));
             }
             println();
         }
@@ -397,7 +385,7 @@ class Main extends Program{
         else if (donjon.etageActuel[p.y][p.x].type == 'H') {
             addHint(p);
             println("Vous avez gagné un indice\nAppuyer sur entrer pour continuer");
-            String tmp = readString();
+            readString();
         }
         else if (random() < donjon.etageActuel[p.y][p.x].spawnRate){
             question(questionReponse, random(0,length(questionReponse,1)), p);
@@ -409,10 +397,9 @@ class Main extends Program{
  void algorithm(){
         clearScreen();
         fetchColors();
-        int tmp = 0;
+        int tmp;
         Player p = newPlayer("");
-        String pseudo = "";
-        int nbEtages = 1;
+        String pseudo;
         boolean fini = false;
         println("================================================================");
         println("||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||");
@@ -446,7 +433,7 @@ class Main extends Program{
                 fini = true;
             }
         }
-        fin(p,donjon);
+        fin(p);
     }
 
 
