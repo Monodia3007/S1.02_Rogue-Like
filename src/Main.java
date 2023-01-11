@@ -7,26 +7,23 @@ class Main extends Program{
     String[][] questionReponseBoss = fetchQuestion("../ressources/QuestionB.csv");
     final Piece[] PIECES = new Piece[]{
             newPiece('V', 0.0, new int[0][0]),
-            newPiece('S', 0.0, fetchApparencePiece("../ressources/startRoom.csv")),
-            newPiece('R', 0.6, fetchApparencePiece("../ressources/standardRoom.csv")),
-            newPiece('H', 0.0, fetchApparencePiece("../ressources/hintRoom.csv")),
-            newPiece('B', 0.0, fetchApparencePiece("../ressources/bossRoom.csv")),
-            newPiece('U', 0.0, fetchApparencePiece("../ressources/stairRoom.csv"))
+            newPiece('S', 0.0, fetchApparence("../ressources/startRoom.csv")),
+            newPiece('R', 0.6, fetchApparence("../ressources/standardRoom.csv")),
+            newPiece('H', 0.0, fetchApparence("../ressources/hintRoom.csv")),
+            newPiece('B', 0.0, fetchApparence("../ressources/bossRoom.csv")),
+            newPiece('U', 0.0, fetchApparence("../ressources/stairRoom.csv"))
     };
-    int[][] colors;
+    int[][] colorPiece, colorCarte, carte = fetchApparence("../ressources/Map.csv");
 
     Donjon newDonjon() {
         //Constructeur du type Donjon
         Donjon donjon = new Donjon();
-        donjon.etageActuel = new Piece[][] {
-                {PIECES[5], PIECES[0]},
-                {PIECES[4], PIECES[0]},
-                {PIECES[2], PIECES[3]},
-                {PIECES[2], PIECES[0]},
-                {PIECES[2], PIECES[2]},
-                {PIECES[0], PIECES[2]},
-                {PIECES[0], PIECES[1]}
-        };
+        donjon.etageActuel = new Piece[length(carte, 1)][length(carte, 2)];
+        for (int i = 0; i < length(carte, 1); i++) {
+            for (int j = 0; j < length(carte, 2); j++) {
+                donjon.etageActuel[i][j] = PIECES[carte[i][j]];
+            }
+        }
         donjon.numeroEtage = 0;
         return donjon;
     }
@@ -40,17 +37,27 @@ class Main extends Program{
         return piece;
     }
 
-    void fetchColors () {
+    void fetchColorPiece () {
         CSVFile file = loadCSV("../ressources/0-colors.csv");
-        colors = new int[rowCount(file)][columnCount(file)];
+        colorPiece = new int[rowCount(file)][columnCount(file)];
         for (int i = 0; i < rowCount(file); i++){
             for (int j = 0; j < columnCount(file); j++){
-                colors[i][j] = stringToInt(getCell(file, i, j));
+                colorPiece[i][j] = stringToInt(getCell(file, i, j));
             }
         }
     }
 
-    int[][] fetchApparencePiece(String filename) {
+    void fetchColorCarte () {
+        CSVFile file = loadCSV("../ressources/1-colors.csv");
+        colorCarte = new int[rowCount(file)][columnCount(file)];
+        for (int i = 0; i < rowCount(file); i++){
+            for (int j = 0; j < columnCount(file); j++){
+                colorCarte[i][j] = stringToInt(getCell(file, i, j));
+            }
+        }
+    }
+
+    int[][] fetchApparence(String filename) {
         CSVFile file = loadCSV(filename);
         int [][] apparence = new int[rowCount(file)][columnCount(file)];
         for (int i = 0; i < rowCount(file); i++){
@@ -60,6 +67,7 @@ class Main extends Program{
         }
         return apparence;
     }
+
 
     String[][] fetchQuestion (String filename){
         //Nous chargeons le fichier possédant les questions, les réponses.
@@ -92,8 +100,8 @@ class Main extends Program{
         //Initialisation du nombre d'indices
         p.hint = 0;
         //Initialisation de la position du joueur
-        p.x = 1;
-        p.y = 6;
+        p.x = 10;
+        p.y = 10;
 		return p;
     }
 
@@ -279,20 +287,14 @@ class Main extends Program{
         clearScreen();
         println();
         println(p.nickname);
-        println();
-        println();
-        for (int i=0; i<length(donjon.etageActuel,1); i++){
-            for (int j=0; j<length(donjon.etageActuel,2); j++){
-                if(p.x == j && p.y==i){
-                    print('P');
-                }
-                else{
-                    print(donjon.etageActuel[i][j].type);
+        for (int i = 0; i < length(donjon.etageActuel, 1); i++) {
+            for (int j = 0; j < length(donjon.etageActuel, 2); j++) {
+                if (i == p.y && j == p.x) {
+                    printPixel(RGBToANSI(colorCarte[carte[i][j]], false), "PP");
+                } else {
+                    printPixel(RGBToANSI(colorCarte[carte[i][j]], true), "  ");
                 }
             }
-            println();
-        }
-        for(int i = 0; i<3; i++){
             println();
         }
         println("Appuyer sur entrer pour fermer la carte");
@@ -301,12 +303,12 @@ class Main extends Program{
         afficherPiece(donjon,p);
     }
 
-    String RGBToANSI(int[] rgb) {
-        return "\u001b[" + (true ? "48" : "38") + ";2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m";
+    String RGBToANSI(int[] rgb, boolean background) {
+        return "\u001b[" + (background ? "48" : "38") + ";2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m";
     }
 
-    void printPixel(String color) {
-        print(color + "  " + ANSI_RESET);
+    void printPixel(String color, String smallText) {
+        print(color + smallText + ANSI_RESET);
     }
 
     void afficherPiece(Donjon donjon, Player p) {
@@ -314,7 +316,7 @@ class Main extends Program{
         println(p.nickname);
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 13; j++) {
-                printPixel(RGBToANSI(colors[donjon.etageActuel[p.y][p.x].apparence[i][j]]));
+                printPixel(RGBToANSI(colorPiece[donjon.etageActuel[p.y][p.x].apparence[i][j]], true), "  ");
             }
             println();
         }
@@ -396,7 +398,8 @@ class Main extends Program{
 
  void algorithm(){
         clearScreen();
-        fetchColors();
+        fetchColorPiece();
+        fetchColorCarte();
         int tmp;
         Player p = newPlayer("");
         String pseudo;
