@@ -5,7 +5,7 @@
 
 ## Présentation du jeu
 
-Educrawler consiste a un enchainement de 5 étage ou vous devrais répondre a diverse question pour avancer et arrier a la salle du boss pour pouvoir monter au prochain niveau.
+Educrawler consiste à un enchainement de 5 étage ou vous devrais répondre à diverse question pour avancer et arriver à la salle du boss pour pouvoir monter au prochain niveau.
 
 
 

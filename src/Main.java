@@ -2,13 +2,13 @@ import extensions.CSVFile;
 
 class Main extends Program{
 
-    String[][] questionReponse = fetchQR("../ressources/Question.csv");
-    String[][] questionReponseBoss = fetchQRB("../ressources/QuestionB.csv");
+    String[][] questionReponse = fetchQuestion("../ressources/Question.csv");
+    String[][] questionReponseBoss = fetchQuestion("../ressources/QuestionB.csv");
     final int COTE = 21;
     final Piece[] PIECES = new Piece[]{
             newPiece('V', 0.0, new int[0][0]),
             newPiece('S', 0.0, fetchApparencePiece("../ressources/startRoom.csv")),
-            newPiece('R', 0.6, fetchApparencePiece("../ressources/standartRoom.csv")),
+            newPiece('R', 0.6, fetchApparencePiece("../ressources/standardRoom.csv")),
             newPiece('H', 0.0, fetchApparencePiece("../ressources/hintRoom.csv")),
             newPiece('B', 0.0, fetchApparencePiece("../ressources/bossRoom.csv")),
             newPiece('U', 0.0, fetchApparencePiece("../ressources/stairRoom.csv"))
@@ -64,33 +64,20 @@ class Main extends Program{
         return apparence;
     }
 
-    String[][] fetchQR (String filename){
+    String[][] fetchQuestion (String filename){
         //Nous chargeons le fichier possédant les questions, les réponses.
         CSVFile file = loadCSV(filename);
         //initialisation du tableau avec la taille du fichier.
-        questionReponse = new String[rowCount(file)][columnCount(file)];
+        String[][] questions= new String[rowCount(file)][columnCount(file)];
         //Remplissage du tableau
         for (int i=0;i<rowCount(file);i++){
             for (int j=0;j<columnCount(file);j++){
-                questionReponse[i][j]= getCell(file,i,j);
+                questions[i][j]= getCell(file,i,j);
             }
         }
-        return questionReponse;
+        return questions;
     }
 
-    String[][] fetchQRB(String filename){
-        //Nous chargeons le fichier possédant les questions, les réponses et les indice du boss.
-        CSVFile file = loadCSV(filename);
-        //initialisation du tableau avec la taille du fichier.
-        questionReponseBoss = new String[rowCount(file)][columnCount(file)];
-        //Remplissage du tableau
-        for (int i=0;i<rowCount(file);i++){
-            for (int j=0;j<columnCount(file);j++){
-                questionReponseBoss[i][j]=getCell(file,i,j);
-            }
-        }
-        return questionReponseBoss;
-    }
     
     boolean gameOver(int life){
         //si le joueur n'a plus de vie
@@ -160,7 +147,7 @@ class Main extends Program{
                 savePlayer(p);
                 clearScreen();
                 afficherPiece(donjon,p);
-                println("Sauvegarde effectuer");
+                println("Sauvegarde effectué");
             }
             //Afficher la carte
             else if ((rep == 'M' || rep == 'm') && (donjon.etageActuel[p.y][p.x].type != 'B')){
@@ -191,7 +178,7 @@ class Main extends Program{
             rep = readString();
             //Si la réponse du joueur est bonne
             if (equals(rep,QR[ligne][1])){
-                println("Bien jouer\nAppuyer sur entrer pour continuer");
+                println("Bien joué\nAppuyer sur entrer pour continuer");
                 //On arrête la boucle
                 stop = true;
                 String tmp = readString();
@@ -224,21 +211,20 @@ class Main extends Program{
     }
 
     void questionBoss(String[][] QR, int ligne, Player p){
-        boolean stop = false;
+        boolean stop = false, hintOn = false;
         String rep = "";
         char repHint = ' ';
-        boolean hintOn = false;
         //Tant que la question n'a pas été répondu ou que le joueur à des vies
         while (!stop && p.life>0){
             //Affichage de la question
             println("Attention BOSS!!\nQuestion : " + QR[ligne][0]);
             //Si le joueur n'a pas encore utilisé d'indice
-            if(hintOn=false){
+            if(hintOn == false){
                 //On lui demande s'il veut en utiliser
                 println("Voulez vous un indice ? o/n");
                 repHint = readChar();
                 //Si oui alors on lui consomme un indice
-                if (repHint=='o'){
+                if (repHint == 'o'){
                     hintOn=true;
                     p.hint--;
                 }
@@ -259,7 +245,7 @@ class Main extends Program{
             //Si la réponse du joueur est bonne
             if (equals(rep,QR[ligne][1])){
                 //On dit au combat de s'arrêter
-                println("Bien jouer\nAppuyer sur entrer pour continuer");
+                println("Bien joué\nAppuyer sur entrer pour continuer");
                 stop = true;
                 hintOn = false;
                 String tmp = readString();
@@ -407,6 +393,11 @@ class Main extends Program{
     void rencontre(Donjon donjon,Player p){
         if(donjon.etageActuel[p.y][p.x].type == 'B'){
             questionBoss(questionReponseBoss,random(0,length(questionReponseBoss,1)),p);
+        }
+        else if (donjon.etageActuel[p.y][p.x].type == 'H') {
+            addHint(p);
+            println("Vous avez gagné un indice\nAppuyer sur entrer pour continuer");
+            String tmp = readString();
         }
         else if (random() < donjon.etageActuel[p.y][p.x].spawnRate){
             question(questionReponse, random(0,length(questionReponse,1)), p);
