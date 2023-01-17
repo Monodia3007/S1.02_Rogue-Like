@@ -202,8 +202,8 @@ class Main extends Program{
 
     void up(Donjon donjon, Player p){
         donjon.numeroEtage++;
-        p.x=1;
-        p.y=6;
+        p.x=10;
+        p.y=10;
         afficherPiece(donjon,p);
     }
 
