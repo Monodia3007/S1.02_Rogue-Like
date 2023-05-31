@@ -220,7 +220,7 @@ class Main extends Program{
                 //On lui demande s'il veut en utiliser
                 println("Voulez vous un indice ? o/n");
                 repHint = readChar();
-                //Si oui alors on lui consomme un indice
+                //Si oui alors, on lui consomme un indice
                 if (repHint == 'o'){
                     hintOn=true;
                     p.hint--;
