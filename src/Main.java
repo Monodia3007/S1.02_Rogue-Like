@@ -3,17 +3,17 @@ import extensions.CSVFile;
 
 class Main extends Program{
 
-    String[][] questionReponse = fetchQuestion("../ressources/Question.csv");
-    String[][] questionReponseBoss = fetchQuestion("../ressources/QuestionB.csv");
+    String[][] questionReponse = fetchQuestion("./ressources/Question.csv");
+    String[][] questionReponseBoss = fetchQuestion("./ressources/QuestionB.csv");
     final Piece[] PIECES = new Piece[]{
             newPiece('V', 0.0, new int[0][0]),
-            newPiece('S', 0.0, fetchApparence("../ressources/startRoom.csv")),
-            newPiece('R', 0.6, fetchApparence("../ressources/standardRoom.csv")),
-            newPiece('H', 0.0, fetchApparence("../ressources/hintRoom.csv")),
-            newPiece('B', 0.0, fetchApparence("../ressources/bossRoom.csv")),
-            newPiece('U', 0.0, fetchApparence("../ressources/stairRoom.csv"))
+            newPiece('S', 0.0, fetchApparence("./ressources/startRoom.csv")),
+            newPiece('R', 0.6, fetchApparence("./ressources/standardRoom.csv")),
+            newPiece('H', 0.0, fetchApparence("./ressources/hintRoom.csv")),
+            newPiece('B', 0.0, fetchApparence("./ressources/bossRoom.csv")),
+            newPiece('U', 0.0, fetchApparence("./ressources/stairRoom.csv"))
     };
-    int[][] colorPiece, colorCarte, carte = fetchApparence("../ressources/Map.csv");
+    int[][] colorPiece, colorCarte, carte = fetchApparence("./ressources/Map.csv");
 
     Donjon newDonjon() {
         //Constructeur du type Donjon
@@ -38,7 +38,7 @@ class Main extends Program{
     }
 
     void fetchColorPiece () {
-        CSVFile file = loadCSV("../ressources/0-colors.csv");
+        CSVFile file = loadCSV("./ressources/0-colors.csv");
         colorPiece = new int[rowCount(file)][columnCount(file)];
         for (int i = 0; i < rowCount(file); i++){
             for (int j = 0; j < columnCount(file); j++){
@@ -48,7 +48,7 @@ class Main extends Program{
     }
 
     void fetchColorCarte () {
-        CSVFile file = loadCSV("../ressources/1-colors.csv");
+        CSVFile file = loadCSV("./ressources/1-colors.csv");
         colorCarte = new int[rowCount(file)][columnCount(file)];
         for (int i = 0; i < rowCount(file); i++){
             for (int j = 0; j < columnCount(file); j++){
@@ -111,35 +111,35 @@ class Main extends Program{
 
     void action(Player p, Donjon donjon){
         boolean stop = false;
-        char rep;
+        String rep;
         // Tant que le déplacement n'est pas effectué
         while (!stop){
             println("Ou voulez vous aller ? ");
             println("Appuyer sur Z pour aller en haut,\nQ pour aller a gauche,\nS pour aller en bas,\net D pour aller a droite");
             println("E pour sauvegarder en dehors d'une salle de boss et \nU pour monter d'étage si vous êtes dans la bonne pièce \nM pour afficher la carte");
-            rep = readChar();
+            rep = readString();
             //Déplacement vers le haut
-            if ((rep == 'Z' || rep == 'z') && (pieceValide(donjon, p.x, p.y - 1))){
+            if ((equals(rep, "Z") || equals(rep, "z")) && (pieceValide(donjon, p.x, p.y - 1))){
                 stop = true;
                 p.y--;
             }
             //Déplacement vers la gauche
-            else if ((rep == 'Q' || rep == 'q') && (pieceValide(donjon, p.x - 1, p.y))){
+            else if ((equals(rep, "Q") || equals(rep, "q")) && (pieceValide(donjon, p.x - 1, p.y))){
                 stop = true;
                 p.x--;
             }
             //Déplacement vers le bas
-            else if ((rep == 'S' || rep == 's') && (pieceValide(donjon, p.x, p.y + 1))){
+            else if ((equals(rep, "S") || equals(rep, "s")) && (pieceValide(donjon, p.x, p.y + 1))){
                 stop = true;
                 p.y++;
             }
             //Déplacement vers la droite
-            else if ((rep == 'D' || rep == 'd') && (pieceValide(donjon, p.x + 1, p.y))){
+            else if ((equals(rep, "D") || equals(rep, "d")) && (pieceValide(donjon, p.x + 1, p.y))){
                 stop = true;
                 p.x++;
             }
             // Sauvegarde
-            else if ((rep == 'E' || rep == 'e') && (donjon.etageActuel[p.y][p.x].type != 'B')){
+            else if ((equals(rep, "E") || equals(rep, "e")) && (donjon.etageActuel[p.y][p.x].type != 'B')){
                 saveDonjon(donjon);
                 savePlayer(p);
                 clearScreen();
@@ -147,10 +147,10 @@ class Main extends Program{
                 println("Sauvegarde effectué");
             }
             //Afficher la carte
-            else if ((rep == 'M' || rep == 'm') && (donjon.etageActuel[p.y][p.x].type != 'B')){
+            else if ((equals(rep, "M") || equals(rep, "m")) && (donjon.etageActuel[p.y][p.x].type != 'B')){
                 afficherCarte(donjon,p);
             }
-            else if ((rep == 'U' || rep == 'u') && (donjon.etageActuel[p.y][p.x].type == 'U')){
+            else if ((equals(rep, "U") || equals(rep, "u")) && (donjon.etageActuel[p.y][p.x].type == 'U')){
                 up(donjon,p);
             }
             // On recommence la saisie de touche, car la touche ne correspond pas au déplacement
@@ -202,8 +202,8 @@ class Main extends Program{
 
     void up(Donjon donjon, Player p){
         donjon.numeroEtage++;
-        p.x=1;
-        p.y=6;
+        p.x=10;
+        p.y=10;
         afficherPiece(donjon,p);
     }
 
@@ -324,7 +324,7 @@ class Main extends Program{
     }
 
     void savePlayer(Player p) {
-        saveCSV(new String[][]{{p.nickname, "" + p.life, "" + p.hint, "" + p.x, "" + p.y}}, "../ressources/SavedPlayer.csv");
+        saveCSV(new String[][]{{p.nickname, "" + p.life, "" + p.hint, "" + p.x, "" + p.y}}, "./ressources/SavedPlayer.csv");
     }
 
     void saveDonjon(Donjon donjon) {
@@ -335,12 +335,12 @@ class Main extends Program{
             }
         }
         savedDonjon[length(donjon.etageActuel, 1)][0] = "" + donjon.numeroEtage;
-        saveCSV(savedDonjon, "../ressources/SavedDonjon.csv");
+        saveCSV(savedDonjon, "./ressources/SavedDonjon.csv");
     }
 
     Player loadPlayer() {
         Player loadedPlayer = newPlayer("");
-        CSVFile file = loadCSV("../ressources/SavedPlayer.csv");
+        CSVFile file = loadCSV("./ressources/SavedPlayer.csv");
         loadedPlayer.nickname = getCell(file, 0, 0);
         loadedPlayer.life = stringToInt(getCell(file, 0, 1));
         loadedPlayer.hint = stringToInt(getCell(file, 0, 2));
@@ -351,7 +351,7 @@ class Main extends Program{
 
     Donjon loadDonjon() {
         Donjon loadedDonjon = newDonjon();
-        CSVFile file = loadCSV("../ressources/SavedDonjon.csv");
+        CSVFile file = loadCSV("./ressources/SavedDonjon.csv");
         String[][] tempDonjon = new String[rowCount(file)][columnCount(file)];
         loadedDonjon.etageActuel = new Piece[rowCount(file) - 1][columnCount(file)];
         for (int i=0;i<rowCount(file);i++){
