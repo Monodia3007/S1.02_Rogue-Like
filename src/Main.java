@@ -111,35 +111,35 @@ class Main extends Program{
 
     void action(Player p, Donjon donjon){
         boolean stop = false;
-        String rep;
+        char rep;
         // Tant que le déplacement n'est pas effectué
         while (!stop){
             println("Ou voulez vous aller ? ");
             println("Appuyer sur Z pour aller en haut,\nQ pour aller a gauche,\nS pour aller en bas,\net D pour aller a droite");
             println("E pour sauvegarder en dehors d'une salle de boss et \nU pour monter d'étage si vous êtes dans la bonne pièce \nM pour afficher la carte");
-            rep = readString();
+            rep = readChar();
             //Déplacement vers le haut
-            if ((equals(rep, "Z") || equals(rep, "z")) && (pieceValide(donjon, p.x, p.y - 1))){
+            if ((rep == 'Z' || rep == 'z') && (pieceValide(donjon, p.x, p.y - 1))){
                 stop = true;
                 p.y--;
             }
             //Déplacement vers la gauche
-            else if ((equals(rep, "Q") || equals(rep, "q")) && (pieceValide(donjon, p.x - 1, p.y))){
+            else if ((rep == 'Q' || rep == 'q') && (pieceValide(donjon, p.x - 1, p.y))){
                 stop = true;
                 p.x--;
             }
             //Déplacement vers le bas
-            else if ((equals(rep, "S") || equals(rep, "s")) && (pieceValide(donjon, p.x, p.y + 1))){
+            else if ((rep == 'S' || rep == 's') && (pieceValide(donjon, p.x, p.y + 1))){
                 stop = true;
                 p.y++;
             }
             //Déplacement vers la droite
-            else if ((equals(rep, "D") || equals(rep, "d")) && (pieceValide(donjon, p.x + 1, p.y))){
+            else if ((rep == 'D' || rep == 'd') && (pieceValide(donjon, p.x + 1, p.y))){
                 stop = true;
                 p.x++;
             }
             // Sauvegarde
-            else if ((equals(rep, "E") || equals(rep, "e")) && (donjon.etageActuel[p.y][p.x].type != 'B')){
+            else if ((rep == 'E' || rep == 'e') && (donjon.etageActuel[p.y][p.x].type != 'B')){
                 saveDonjon(donjon);
                 savePlayer(p);
                 clearScreen();
@@ -147,10 +147,10 @@ class Main extends Program{
                 println("Sauvegarde effectué");
             }
             //Afficher la carte
-            else if ((equals(rep, "M") || equals(rep, "m")) && (donjon.etageActuel[p.y][p.x].type != 'B')){
+            else if ((rep == 'M' || rep == 'm') && (donjon.etageActuel[p.y][p.x].type != 'B')){
                 afficherCarte(donjon,p);
             }
-            else if ((equals(rep, "U") || equals(rep, "u")) && (donjon.etageActuel[p.y][p.x].type == 'U')){
+            else if ((rep == 'U' || rep == 'u') && (donjon.etageActuel[p.y][p.x].type == 'U')){
                 up(donjon,p);
             }
             // On recommence la saisie de touche, car la touche ne correspond pas au déplacement
@@ -202,8 +202,8 @@ class Main extends Program{
 
     void up(Donjon donjon, Player p){
         donjon.numeroEtage++;
-        p.x=10;
-        p.y=10;
+        p.x=1;
+        p.y=6;
         afficherPiece(donjon,p);
     }
 
